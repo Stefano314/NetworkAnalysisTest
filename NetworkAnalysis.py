@@ -60,4 +60,5 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,nodeSize=7,
         pyvis_net.show_buttons()
         pyvis_net.show("NetworkPlot.html")
 #============================================================
-GenerateMatrix()
+
+NetworkVisualization(CanonicalNetwork(100,0.05))
