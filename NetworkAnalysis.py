@@ -3,6 +3,9 @@ import networkx as nx
 import warnings
 from pyvis.network import Network
 
+from hypothesis import given
+import hypothesis.strategies as st
+
 #============================================================
 def ManualMatrixGeneration():
     """
@@ -225,4 +228,27 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
         pyvis_net.show(network_name)
 #============================================================
 
-ManualMatrixGeneration()
+#TESTING
+def test_Canonical1():
+    """ Test if the sizes of a 0 array generated with 
+    CanonicalNetwork is actually 0."""
+    assert CanonicalNetwork(0).size == 0
+
+def test_Canonical2():
+    """ Test if the size of the array generated with 
+    CanonicalNetwork is correct."""
+    value=np.random.randint(0,100)
+    assert CanonicalNetwork(value).size == value*value
+
+def test_Canonical3():
+    """ Test if the array generated with a '0' link probability 
+    is actually an array full of zeros"""
+    value=np.random.randint(0,100)
+    assert np.array_equal(CanonicalNetwork(value,0),
+                          np.zeros((value,value)))
+    
+def test_Canonical4():
+    """ Test if the array generated with a '1' link probability 
+    is actually an array with no zeros"""
+    value=np.random.randint(0,100)
+    assert CanonicalNetwork(value,1).all()
