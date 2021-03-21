@@ -1,5 +1,5 @@
 # NetworkAnalysisTest
-This is a test of a simple network generation/visualization and uploading everything on github using Git.
+This is a test of a simple network generation/visualization. Also I use this test to learn how to use GIT as a version controller.
 
 #================================================================================
 
