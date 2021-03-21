@@ -1,5 +1,6 @@
 import numpy as np
 import networkx as nx
+import warnings
 from pyvis.network import Network
 
 #============================================================
@@ -42,11 +43,19 @@ def ManualMatrixGeneration():
 
     """
     n_nodes=int(input("-Number of Nodes: "))
+    if n_nodes<0:
+        raise ValueError("In the function ManualMatrixGeneration(), n_nodes must be a positive integer.")
+    
     print('\n-Build the Adjacency Matrix Row by Row: ')
     adjacencyMatrix=np.zeros((n_nodes,n_nodes))
     for i in range(0,n_nodes):
         print('\n-',i+1,'row: ')
-        adjacencyMatrix[i]=list(map(int, input().split()))
+        row=list(map(int, input().split()))
+        if len(row) != n_nodes:
+            raise AssertionError("The number of elements entered",len(row),
+                                 "is different from the wanted network size",n_nodes)
+        adjacencyMatrix[i]=row
+        
     print(adjacencyMatrix)
     return adjacencyMatrix
 #============================================================
@@ -85,6 +94,14 @@ def CanonicalNetwork(n_nodes=100,link_prob=0.1):
     
     
     """
+    if type(n_nodes) != int or n_nodes<0:
+        raise TypeError("In the function CanonicalNetwork(), n_nodes must be a positive integer.")
+   
+    if type(link_prob) != float and type(link_prob) != int or link_prob < 0:
+        raise TypeError("In the function CanonicalNetwork(), link_prob must be an integer or a float.")
+    elif link_prob > 1:
+        warnings.warn("\nWARNING: You are using a probability which is greater than 1, are you sure?")
+
 #Adjacency Matrix Generation
     adjacencyMatrix=np.zeros((n_nodes,n_nodes))
     for i in range(0,n_nodes):
@@ -124,6 +141,10 @@ def RandomNetwork(n_nodes=100):
      [0,0,0,1,0]]
     
     """
+    
+    if type(n_nodes) != int or n_nodes<0:
+        raise ValueError("In the function RandomNetwork(), n_nodes must be a positive integer.")
+
 #Adjacency Matrix Generation
     adjacencyMatrix = np.random.rand(n_nodes,n_nodes)
     for i in range(0,n_nodes):
@@ -204,4 +225,4 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
         pyvis_net.show(network_name)
 #============================================================
 
-NetworkVisualization(CanonicalNetwork(100,0.05))
+ManualMatrixGeneration()
