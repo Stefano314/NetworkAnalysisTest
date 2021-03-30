@@ -108,15 +108,6 @@ def CanonicalNetwork(n_nodes=100,link_prob=0.1):
         print("\n========== WARNING: Using a probability that is greater than 1 ==========\n")
 
 #Adjacency Matrix Generation
-# =============================================================================
-#     adjacencyMatrix=np.zeros((n_nodes,n_nodes))
-#     for i in range(0,n_nodes):
-#         for j in range(0,n_nodes):
-#             if np.random.uniform(low=0,high=1) <= link_prob:
-#                adjacencyMatrix[i,j]=1
-#             else: adjacencyMatrix[i,j]=0
-#     return adjacencyMatrix
-# =============================================================================
     adjacencyMatrix=np.zeros((n_nodes*n_nodes,))
     for i in range(0,adjacencyMatrix.size):
         if np.random.uniform(low=0,high=1) <= link_prob:
