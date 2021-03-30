@@ -1,10 +1,6 @@
 import numpy as np
 import networkx as nx
-import warnings
 from pyvis.network import Network
-
-from hypothesis import given
-import hypothesis.strategies as st
 
 #============================================================
 def ManualMatrixGeneration():
@@ -55,7 +51,7 @@ def ManualMatrixGeneration():
         print('\n-',i+1,'row: ')
         row=list(map(int, input().split()))
         if len(row) != n_nodes:
-            raise AssertionError("The number of elements entered",len(row),
+            raise ValueError("The number of elements entered",len(row),
                                  "is different from the wanted network size",n_nodes)
         adjacencyMatrix[i]=row
         
@@ -97,13 +93,17 @@ def CanonicalNetwork(n_nodes=100,link_prob=0.1):
     
     
     """
-    if type(n_nodes) != int or n_nodes<0:
+    if not isinstance(n_nodes,(int)):
         raise TypeError("In the function CanonicalNetwork(), n_nodes must be a positive integer.")
-   
-    if type(link_prob) != float and type(link_prob) != int or link_prob < 0:
+    elif n_nodes<0:
+        raise ValueError("In the function CanonicalNetwork(), n_nodes must be a positive integer.")
+        
+    if not isinstance(link_prob,(int,float)):
         raise TypeError("In the function CanonicalNetwork(), link_prob must be an integer or a float.")
+    elif link_prob < 0:
+        raise ValueError("In the function CanonicalNetwork(), link_prob must be grater than 0.")
     elif link_prob > 1:
-        warnings.warn("\nWARNING: You are using a probability which is greater than 1, are you sure?")
+        print("\n========== WARNING: Using a probability that is greater than 1 ==========\n")
 
 #Adjacency Matrix Generation
     adjacencyMatrix=np.zeros((n_nodes,n_nodes))
@@ -145,9 +145,10 @@ def RandomNetwork(n_nodes=100):
     
     """
     
-    if type(n_nodes) != int or n_nodes<0:
+    if not isinstance(n_nodes,(int)):
+        raise TypeError("In the function RandomNetwork(), n_nodes must be a positive integer.")
+    elif n_nodes<0:
         raise ValueError("In the function RandomNetwork(), n_nodes must be a positive integer.")
-
 #Adjacency Matrix Generation
     adjacencyMatrix = np.random.rand(n_nodes,n_nodes)
     for i in range(0,n_nodes):
@@ -229,6 +230,8 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
 #============================================================
 
 #TESTING
+
+#CanonicalNetwork function
 def test_Canonical1():
     """ Test if the sizes of a 0 array generated with 
     CanonicalNetwork is actually 0."""
@@ -252,3 +255,11 @@ def test_Canonical4():
     is actually an array with no zeros"""
     value=np.random.randint(0,100)
     assert CanonicalNetwork(value,1).all()
+    
+#RandomNetwork function
+def test_Random1():
+    """ Test if the size of the array generated with 
+    RandomNetwork is correct."""
+    value=np.random.randint(0,100)
+    assert RandomNetwork(value).size == value*value
+
