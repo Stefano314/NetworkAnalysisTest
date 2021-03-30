@@ -228,11 +228,6 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
         pyvis_net.show(network_name)
 #============================================================
 
-start=pt()
-CanonicalNetwork(1000,0.2)
-end=pt()
-print("-Matrix Process time:",end-start)
-
 #TESTING
 
 #CanonicalNetwork function
