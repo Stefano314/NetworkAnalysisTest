@@ -1,7 +1,7 @@
 import numpy as np
 import networkx as nx
 from pyvis.network import Network
-from time import process_time as pt
+#from time import process_time as pt
 
 np.random.seed(42)
 #============================================================
@@ -160,7 +160,8 @@ def RandomNetwork(n_nodes=100):
 #============================================================
 def NetworkVisualization(adjacencyMatrix,Directed=True,
                          px_X='900',px_Y='600',
-                         network_name="NetworkPlot.html"):
+                         network_name="NetworkPlot.html",
+                         physics=False):
     """
     This function generates an HTML file in which is plotted the
     network created.
@@ -207,25 +208,15 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
     >>> test_array.integers(2, size=(100, 100))
     random 100x100 array of zeros and ones
     >>> NetworkVisualization(test_array,px_X='1000',px_Y='1200')
-    """
-    node_number=adjacencyMatrix.shape[1]
-    
-    if Directed == True:
-        NX_Network=nx.DiGraph(adjacencyMatrix)
-        pyvis_net=Network(notebook=True,directed=True,height=px_Y+'px', 
-                          width=px_X+'px')
-        pyvis_net.from_nx(NX_Network,default_node_size=node_number)
-        pyvis_net.hrepulsion(node_distance=300)
-        pyvis_net.show_buttons()
-        pyvis_net.show(network_name)
-    else:
-        NX_Network=nx.Graph(adjacencyMatrix)
-        pyvis_net=Network(notebook=True,directed=False,height=px_Y, 
-                          width=px_X)
-        pyvis_net.from_nx(NX_Network,default_node_size=node_number)
-        pyvis_net.hrepulsion(node_distance=300)
-        pyvis_net.show_buttons()
-        pyvis_net.show(network_name)
+    """    
+    NX_Network=nx.DiGraph(adjacencyMatrix)
+    pyvis_net=Network(notebook=True,directed=Directed,height=px_Y+'px', 
+                      width=px_X+'px')
+    pyvis_net.from_nx(NX_Network,default_node_size=10)
+    pyvis_net.hrepulsion(node_distance=300)
+    pyvis_net.toggle_physics(physics)
+    pyvis_net.show_buttons()
+    pyvis_net.show(network_name)
 #============================================================
 
 #TESTING
