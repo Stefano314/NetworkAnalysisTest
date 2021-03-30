@@ -1,7 +1,9 @@
 import numpy as np
 import networkx as nx
 from pyvis.network import Network
+from time import process_time as pt
 
+np.random.seed(42)
 #============================================================
 def ManualMatrixGeneration():
     """
@@ -106,12 +108,21 @@ def CanonicalNetwork(n_nodes=100,link_prob=0.1):
         print("\n========== WARNING: Using a probability that is greater than 1 ==========\n")
 
 #Adjacency Matrix Generation
-    adjacencyMatrix=np.zeros((n_nodes,n_nodes))
-    for i in range(0,n_nodes):
-        for j in range(0,n_nodes):
-            if np.random.default_rng().random() <= link_prob:
-               adjacencyMatrix[i,j]=1
-            else: adjacencyMatrix[i,j]=0
+# =============================================================================
+#     adjacencyMatrix=np.zeros((n_nodes,n_nodes))
+#     for i in range(0,n_nodes):
+#         for j in range(0,n_nodes):
+#             if np.random.uniform(low=0,high=1) <= link_prob:
+#                adjacencyMatrix[i,j]=1
+#             else: adjacencyMatrix[i,j]=0
+#     return adjacencyMatrix
+# =============================================================================
+    adjacencyMatrix=np.zeros((n_nodes*n_nodes,))
+    for i in range(0,adjacencyMatrix.size):
+        if np.random.uniform(low=0,high=1) <= link_prob:
+            adjacencyMatrix[i]=1
+        else: adjacencyMatrix[i]=0
+    adjacencyMatrix=adjacencyMatrix.reshape((n_nodes,n_nodes))
     return adjacencyMatrix
 #============================================================
 
@@ -150,10 +161,7 @@ def RandomNetwork(n_nodes=100):
     elif n_nodes<0:
         raise ValueError("In the function RandomNetwork(), n_nodes must be a positive integer.")
 #Adjacency Matrix Generation
-    adjacencyMatrix = np.random.rand(n_nodes,n_nodes)
-    for i in range(0,n_nodes):
-        for j in range(0,n_nodes):
-            adjacencyMatrix[i,j]=np.round(adjacencyMatrix[i,j])
+    adjacencyMatrix = np.round(np.random.rand(n_nodes,n_nodes))
     return adjacencyMatrix
 #============================================================
 
@@ -228,6 +236,11 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
         pyvis_net.show_buttons()
         pyvis_net.show(network_name)
 #============================================================
+
+start=pt()
+CanonicalNetwork(1000,0.2)
+end=pt()
+print("-Matrix Process time:",end-start)
 
 #TESTING
 
