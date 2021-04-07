@@ -63,7 +63,7 @@ def ManualMatrixGeneration():
 
 
 #============================================================
-def CanonicalNetwork(n_nodes=100,link_prob=0.1):
+def CanonicalNetwork(n_nodes=100,link_prob=0.1,undirected=False):
     """
     Generates a network with a fixed number of nodes where each
     link between the nodes has a fixed probability 'link_prob' to
@@ -78,7 +78,12 @@ def CanonicalNetwork(n_nodes=100,link_prob=0.1):
         Set the link probability between two generic nodes 
         (also with the same node).
         The default value is '0.1'.
-
+    undirected : bool, optional
+        If True it generates a traceless symmetric matrix, otherwise the
+        matrix can also be non-symmetric. In order to generate an Undirected
+        Network put this parameter as 'True', since it is extremely fast.
+        The default value is 'False'.
+    
     Returns
     -------
     output : ndarray
@@ -93,6 +98,11 @@ def CanonicalNetwork(n_nodes=100,link_prob=0.1):
      [0,0,0,0],
      [0,0,0,0]]
     
+    >>> CanonicalNetwork(n_nodes=4,link_prob=0.3,undirected=True)
+    [[0,0,1,1],
+     [0,0,1,0],
+     [1,1,0,0],
+     [1,0,0,0]]
     
     """
     if not isinstance(n_nodes,(int)):
@@ -108,18 +118,22 @@ def CanonicalNetwork(n_nodes=100,link_prob=0.1):
         print("\n========== WARNING: Using a probability that is greater than 1 ==========\n")
 
 #Adjacency Matrix Generation
-    adjacencyMatrix=np.zeros((n_nodes*n_nodes,))
-    for i in range(0,adjacencyMatrix.size):
-        if np.random.uniform(low=0,high=1) <= link_prob:
-            adjacencyMatrix[i]=1
-        else: adjacencyMatrix[i]=0
-    adjacencyMatrix=adjacencyMatrix.reshape((n_nodes,n_nodes))
-    return adjacencyMatrix
+    if undirected==False:
+        adjacencyMatrix=np.zeros((n_nodes*n_nodes,))
+        for i in range(0,adjacencyMatrix.size):
+            if np.random.uniform(low=0,high=1) <= link_prob:
+                adjacencyMatrix[i]=1
+            else: adjacencyMatrix[i]=0
+        adjacencyMatrix=adjacencyMatrix.reshape((n_nodes,n_nodes))
+        return adjacencyMatrix
+    elif undirected==True:
+        adjacencyMatrix=np.triu(np.random.uniform(0,1,n_nodes),1)>1-link_prob
+        return (adjacencyMatrix+adjacencyMatrix.T).astype(float)
 #============================================================
 
 
 #============================================================
-def RandomNetwork(n_nodes=100):
+def RandomNetwork(n_nodes=100,undirected=False):
     """
     This function generates a random adjacency matrix of a network with
     'n_nodes' nodes. The links between the nodes are random.
@@ -129,7 +143,12 @@ def RandomNetwork(n_nodes=100):
     n_nodes : int, optional
         Set the number of nodes of the network. 
         The default value is 100.
-
+    undirected : bool, optional
+        If True it generates a traceless symmetric matrix, otherwise the
+        matrix can also be non-symmetric. In order to generate an Undirected
+        Network put this parameter as 'True', since it is faster.
+        The default value is 'False'.
+        
     Returns
     -------
     output : ndarray
@@ -145,6 +164,12 @@ def RandomNetwork(n_nodes=100):
      [1,0,0,1,0],
      [0,0,0,1,0]]
     
+    >>> RandomNetwork(5,True)
+    [[0,0,1,0,1],
+     [0,0,1,0,0],
+     [1,1,0,0,1],
+     [0,0,0,0,1],
+     [1,0,1,1,0]]
     """
     
     if not isinstance(n_nodes,(int)):
@@ -152,8 +177,12 @@ def RandomNetwork(n_nodes=100):
     elif n_nodes<0:
         raise ValueError("In the function RandomNetwork(), n_nodes must be a positive integer.")
 #Adjacency Matrix Generation
-    adjacencyMatrix = np.round(np.random.rand(n_nodes,n_nodes))
-    return adjacencyMatrix
+    if undirected==False:
+        adjacencyMatrix = np.round(np.random.rand(n_nodes,n_nodes))
+        return adjacencyMatrix
+    elif undirected==True:
+        adjacencyMatrix=np.triu(np.random.uniform(0,1,n_nodes),1)>0.5
+        return (adjacencyMatrix+adjacencyMatrix.T).astype(float)
 #============================================================
 
 
@@ -237,7 +266,7 @@ def test_Canonical3():
     """ Test if the array generated with a '0' link probability 
     is actually an array full of zeros"""
     value=np.random.randint(0,100)
-    assert np.array_equal(CanonicalNetwork(value,0),
+    assert np.array_equal(CanonicalNetwork(value,0,True),
                           np.zeros((value,value)))
     
 def test_Canonical4():
@@ -245,6 +274,13 @@ def test_Canonical4():
     is actually an array with no zeros"""
     value=np.random.randint(0,100)
     assert CanonicalNetwork(value,1).all()
+    
+def test_Canonical5():
+    """ Test if the array generated with a '1' link probability 
+    has a diagonal full of zeros."""
+    value=np.random.randint(0,100)
+    assert np.array_equal(np.diagonal(CanonicalNetwork(value,1,True)),
+                          np.zeros((value,)))
     
 #RandomNetwork function
 def test_Random1():
