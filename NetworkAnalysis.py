@@ -214,8 +214,10 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
     
     Returns
     -------
-    This function returns nothing, but it generates an HTML file inside the
-    working directory.
+    output: pyvis.network.Network Type
+        The output of the function is a Newtork object of pyvis.network
+        module; it also generates an HTML file inside the working 
+        directory showing the network representation.
 
     Examples
     --------
@@ -246,6 +248,7 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
     pyvis_net.toggle_physics(physics)
     pyvis_net.show_buttons()
     pyvis_net.show(network_name)
+    return pyvis_net
 #============================================================
 
 #TESTING
