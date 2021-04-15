@@ -1,9 +1,9 @@
 import numpy as np
 import networkx as nx
-from pyvis.network import Network
+import pyvis.network as pn
 #from time import process_time as pt
-
 np.random.seed(42)
+
 #============================================================
 def ManualMatrixGeneration():
     """
@@ -188,7 +188,7 @@ def RandomNetwork(n_nodes=100,undirected=False):
 
 #============================================================
 def NetworkVisualization(adjacencyMatrix,Directed=True,
-                         px_X='900',px_Y='600',
+                         px_X='900',px_Y='600', scale = 6,
                          network_name="NetworkPlot.html",
                          physics=False):
     """
@@ -241,11 +241,27 @@ def NetworkVisualization(adjacencyMatrix,Directed=True,
     >>> NetworkVisualization(test_array,px_X='1000',px_Y='1200')
     """    
     NX_Network=nx.DiGraph(adjacencyMatrix)
-    pyvis_net=Network(notebook=True,directed=Directed,height=px_Y+'px', 
+    nodes = NX_Network.number_of_nodes()
+    average_degree = np.array(NX_Network.degree(range(0,nodes,1),'weight')).sum(axis=0)[1]/nodes   
+        
+    pyvis_net=pn.Network(notebook=True,directed=Directed,height=px_Y+'px', 
                       width=px_X+'px')
-    pyvis_net.from_nx(NX_Network,default_node_size=10)
-    pyvis_net.hrepulsion(node_distance=300)
+    pyvis_net.from_nx(NX_Network)
+
     pyvis_net.toggle_physics(physics)
+    if physics == True:
+        pyvis_net.hrepulsion(node_distance=500)
+        for edge in pyvis_net.edges:
+            edge['arrows'] = {'to': {'scaleFactor': 2}}
+        for node in pyvis_net.nodes:
+            node['size'] = 15*scale*NX_Network.degree(node['id'],'weight')/average_degree
+    elif physics == False:
+        for node in pyvis_net.nodes:
+            node['size'] = scale*NX_Network.degree(node['id'],'weight')/average_degree
+            #X_Network.add_node(node, 
+            #                    size = NX_Network.degree(node,'weight')/average_degree*scale)
+        for edge in pyvis_net.edges:
+            edge['arrows'] = {'to': {'scaleFactor': 0.3}}
     pyvis_net.show_buttons()
     pyvis_net.show(network_name)
     return pyvis_net
